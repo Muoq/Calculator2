@@ -6,6 +6,7 @@ class Expression() {
 
     companion object {
         val operators = Operator.validOperators
+        val EPSILON = 0.0000000000000001
     }
 
     private var expression: MutableList<Any> = mutableListOf()
@@ -17,14 +18,26 @@ class Expression() {
         }
 
     constructor(expressionString: String): this() {
+        expressionString.replace(" ", "")
+        if (expressionString.isEmpty()) {
+            addNumber(BigDecimal(0))
+        }
+
+        var decimalDivisor = BigDecimal(1)
         for (char in expressionString) {
             if (char in operators) {
                 addOperator(Operator(char))
-            } else if (char == ' ') {
-                continue
             } else {
                 if (isNumber.isNotEmpty() && isNumber[isNumber.size - 1]) {
-                    expression[expression.size - 1] = expression.last() as BigDecimal * BigDecimal(10) + BigDecimal(char.toString())
+
+                    if (char == '.') {
+                        decimalDivisor = BigDecimal(10)
+                        continue
+                    } else if (decimalDivisor.compareTo(BigDecimal(1)) == 1) {
+                        expression[expression.size - 1] = expression.last() as BigDecimal + BigDecimal(char.toString()).divide(decimalDivisor)
+                    } else {
+                        expression[expression.size - 1] = expression.last() as BigDecimal * BigDecimal(10) + BigDecimal(char.toString())
+                    }
                 } else {
                     addNumber(BigDecimal(char.toString()))
                 }
@@ -77,13 +90,13 @@ class Expression() {
     }
 
     fun setNumberAt(index: Int, num: BigDecimal) {
-        expression.set(index, num)
-        isNumber.set(index, true)
+        expression[index] = num
+        isNumber[index] = true
     }
 
     fun setOperatorAt(index: Int, operator: Operator) {
-        expression.set(index, operator)
-        isNumber.set(index, false)
+        expression[index] = operator
+        isNumber[index] = false
     }
 
     fun isNumber(index: Int) = isNumber[index]
@@ -109,6 +122,12 @@ class Expression() {
 
     fun getSurroundingNumbers(index: Int): Pair<BigDecimal, BigDecimal> {
         return Pair(getNumberAt(index - 1), getNumberAt(index + 1))
+    }
+
+    fun clear() {
+        size = 0
+        expression = mutableListOf(BigDecimal(0))
+        isNumber = mutableListOf(true)
     }
 
     override fun toString(): String {

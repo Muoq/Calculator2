@@ -15,10 +15,10 @@ open class Operator() {
 
             BigDecimal(Math.pow(yDouble, 1 / xDouble))
         }
-        val multiplyOperation = {x: BigDecimal, y: BigDecimal -> x * y}
-        val divideOperation = {x: BigDecimal, y: BigDecimal -> x / y}
-        val addOperation = {x: BigDecimal, y: BigDecimal -> x + y}
-        val subtractOperation = {x: BigDecimal, y: BigDecimal -> x - y}
+        val multiplyOperation = {x: BigDecimal, y: BigDecimal -> x.setScale(16, BigDecimal.ROUND_HALF_UP) * y}
+        val divideOperation = {x: BigDecimal, y: BigDecimal -> x.setScale(16, BigDecimal.ROUND_HALF_UP) / y}
+        val addOperation = {x: BigDecimal, y: BigDecimal -> x.setScale(16, BigDecimal.ROUND_HALF_UP) + y}
+        val subtractOperation = {x: BigDecimal, y: BigDecimal -> x.setScale(16, BigDecimal.ROUND_HALF_UP) - y}
 
         val OPEN_PARENTHESIS_ID = 7
         val CLOSE_PARENTHESIS_ID = 6
@@ -32,7 +32,7 @@ open class Operator() {
         val PARENTHESIS_HIERARCHY = 4
         val POWER_HIERARCHY = 2
         val MULTIPLY_HIERARCHY = 1
-        val ADD_HIEREARCHY = 0
+        val ADD_HIERARCHY = 0
 
         val emptyOperation: (BigDecimal, BigDecimal) -> BigDecimal = {x, y -> x}
 
@@ -62,7 +62,7 @@ open class Operator() {
     }
 
     constructor(operatorID: Int): this() {
-        if (operatorID !in ADD_ID..OPEN_PARENTHESIS_ID) {
+        if (operatorID !in SUBTRACT_ID..CLOSE_PARENTHESIS_ID) {
             throw throw InvalidParameterException("Error: \'" + operatorID.toString() + "\' is not a valid operator ID.")
         }
 

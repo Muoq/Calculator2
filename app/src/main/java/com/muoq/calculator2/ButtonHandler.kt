@@ -1,43 +1,32 @@
 package com.muoq.calculator2
 
-import android.graphics.Path
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import com.muoq.calculator2.logic.*
+import com.muoq.calculator2.ui.TextOutput
 import java.math.BigDecimal
 
-class ButtonHandler(val expression: Expression) {
+class ButtonHandler(var expression: Expression, val textOutput: TextOutput) {
 
-    private fun addNumberToExpression(num: Int) {
-        val expLastIndex = expression.size - 1
-
-        if (expression.isNumber(expLastIndex)) {
-            val magnitudePlus = expression.getNumberAt(expLastIndex) * BigDecimal(10)
-            expression.setNumberAt(expLastIndex, magnitudePlus + BigDecimal(num))
-        } else {
-            expression.setNumberAt(expLastIndex, BigDecimal(num))
-        }
+    companion object {
+        val TAG = "CalculatorTAG"
+        val TAGTHIS = "ButtonHandlerTAG"
     }
 
-    private fun addOperatorToExpression(operator: Operator) {
-        val expLastIndex = expression.size - 1
+    val stringChecker = StringChecker()
 
-        if (expression.isOperator(expLastIndex)) {
-            if (expression.getOperatorAt(expLastIndex).hierarchy == Operator.MULTIPLY_HIERARCHY ||
-                    expression.getOperatorAt(expLastIndex).hierarchy == Operator.POWER_HIERARCHY) {
-                if (operator.hierarchy < Operator.PARENTHESIS_HIERARCHY) {
-                    expression.setOperatorAt(expLastIndex, operator)
-                }
-            } else if (expression.getOperatorAt(expLastIndex).hierarchy == Operator.ADD_HIEREARCHY) {
-                if (expression.getOperatorAt(expLastIndex).id == operator.id) {
-                    expression.setOperatorAt(expLastIndex, Operator(Operator.ADD_ID))
-                } else {
-                    expression.setOperatorAt(expLastIndex, Operator(Operator.SUBTRACT_ID))
-                }
-            }
-        }
+    var expressionString = ""
+
+    constructor(expressionString: String, textOutput: TextOutput): this(Expression(expressionString), textOutput) {
+        this.expressionString = expressionString
+    }
+
+    fun updateExpression() {
+        expressionString = stringChecker.checkString(expressionString)
+        expression = Expression(expressionString)
+        textOutput.updateText(expressionString)
+        Log.i(TAG, expression.toString())
     }
 
     fun setNumButtonListeners(numButtons: List<Button>) {
@@ -45,36 +34,38 @@ class ButtonHandler(val expression: Expression) {
             button.setOnClickListener {view: View ->
                 when(view.id) {
                     R.id.btn_0 -> {
-                        addNumberToExpression(0)
+                        expressionString+='0'
                     }
                     R.id.btn_1 -> {
-                        addNumberToExpression(1)
+                        expressionString+='1'
                     }
                     R.id.btn_2 -> {
-                        addNumberToExpression(2)
+                        expressionString+='2'
                     }
                     R.id.btn_3 -> {
-                        addNumberToExpression(3)
+                        expressionString+='3'
                     }
                     R.id.btn_4 -> {
-                        addNumberToExpression(4)
+                        expressionString+='4'
                     }
                     R.id.btn_5 -> {
-                        addNumberToExpression(5)
+                        expressionString+='5'
                     }
                     R.id.btn_6 -> {
-                        addNumberToExpression(6)
+                        expressionString+='6'
                     }
                     R.id.btn_7 -> {
-                        addNumberToExpression(7)
+                        expressionString+='7'
                     }
                     R.id.btn_8 -> {
-                        addNumberToExpression(8)
+                        expressionString+='8'
                     }
                     R.id.btn_9 -> {
-                        addNumberToExpression(9)
+                        expressionString+='9'
                     }
                 }
+
+                updateExpression()
             }
         }
     }
@@ -84,22 +75,49 @@ class ButtonHandler(val expression: Expression) {
             button.setOnClickListener {view: View ->
                 when(view.id) {
                     R.id.btn_multiply -> {
-                        addOperatorToExpression(Operator(Operator.MULTIPLY_ID))
+                        expressionString+='\u22C5'
                     }
                     R.id.btn_divide -> {
-                        addOperatorToExpression(Operator(Operator.DIVIDE_ID))
+                        expressionString+='\u00F7'
                     }
                     R.id.btn_add -> {
-                        addOperatorToExpression(Operator(Operator.ADD_ID))
+                        expressionString+='+'
                     }
                     R.id.btn_subtract -> {
-                        addOperatorToExpression(Operator(Operator.SUBTRACT_ID))
+                        expressionString+='-'
+                    }
+                    R.id.btn_decimal -> {
+                        expressionString+='.'
                     }
                 }
+
+                updateExpression()
             }
         }
+    }
 
-        Log.i("")
+    fun setFunctionalButtonListeners(functionalButtons: List<Button>) {
+        for (button in functionalButtons) {
+            button.setOnClickListener {view: View ->
+                when(view.id) {
+                    R.id.btn_ac -> {
+                        expressionString = ""
+                    }
+                    R.id.btn_del -> {
+                        var tempString = ""
+                        for (i in 0 until expressionString.length - 1) {
+                            tempString+=expressionString[i]
+                        }
+
+                        expressionString = tempString
+                    }
+                    R.id.btn_equals -> {
+                        expressionString = Solver().solve(expression).toString()
+                    }
+                }
+                updateExpression()
+            }
+        }
     }
 
 }
