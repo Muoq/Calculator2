@@ -6,6 +6,8 @@ import java.security.InvalidParameterException
 open class Operator() {
 
     companion object {
+        val SCALE = 18
+
         val validOperators = listOf('(', ')', 'p','r', '*', '/', '+', '-')
 
         val powerOperation = { x: BigDecimal, y: BigDecimal -> BigDecimal(Math.pow(x.toDouble(), y.toDouble()))}
@@ -15,10 +17,17 @@ open class Operator() {
 
             BigDecimal(Math.pow(yDouble, 1 / xDouble))
         }
-        val multiplyOperation = {x: BigDecimal, y: BigDecimal -> x.setScale(16, BigDecimal.ROUND_HALF_UP) * y}
-        val divideOperation = {x: BigDecimal, y: BigDecimal -> x.setScale(16, BigDecimal.ROUND_HALF_UP) / y}
-        val addOperation = {x: BigDecimal, y: BigDecimal -> x.setScale(16, BigDecimal.ROUND_HALF_UP) + y}
-        val subtractOperation = {x: BigDecimal, y: BigDecimal -> x.setScale(16, BigDecimal.ROUND_HALF_UP) - y}
+        val multiplyOperation = {x: BigDecimal, y: BigDecimal ->
+            if (x.compareTo(BigDecimal(0)) == 1) {
+                BigDecimal(0).setScale(SCALE, BigDecimal.ROUND_HALF_UP)
+            } else if (y.compareTo(BigDecimal(0)) == 1) {
+                BigDecimal(0).setScale(SCALE, BigDecimal.ROUND_HALF_UP)
+            }
+            x.setScale(SCALE, BigDecimal.ROUND_HALF_UP) * y
+        }
+        val divideOperation = {x: BigDecimal, y: BigDecimal -> x.setScale(SCALE, BigDecimal.ROUND_HALF_UP) / y}
+        val addOperation = {x: BigDecimal, y: BigDecimal -> x.setScale(SCALE, BigDecimal.ROUND_HALF_UP) + y}
+        val subtractOperation = {x: BigDecimal, y: BigDecimal -> x.setScale(SCALE, BigDecimal.ROUND_HALF_UP) - y}
 
         val OPEN_PARENTHESIS_ID = 7
         val CLOSE_PARENTHESIS_ID = 6

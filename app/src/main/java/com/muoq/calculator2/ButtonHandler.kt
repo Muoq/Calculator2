@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.Button
 import com.muoq.calculator2.logic.*
 import com.muoq.calculator2.ui.TextOutput
-import java.math.BigDecimal
 
 class ButtonHandler(var expression: Expression, val textOutput: TextOutput) {
 
@@ -14,7 +13,7 @@ class ButtonHandler(var expression: Expression, val textOutput: TextOutput) {
         val TAGTHIS = "ButtonHandlerTAG"
     }
 
-    val stringChecker = StringChecker()
+    private val stringChecker = StringChecker()
 
     var expressionString = ""
 
@@ -78,7 +77,7 @@ class ButtonHandler(var expression: Expression, val textOutput: TextOutput) {
                         expressionString+='('
                     }
                     R.id.btn_close_parenthesis -> {
-                        expressionString+=')'
+                        closeParenthesisChecker()
                     }
                     R.id.btn_multiply -> {
                         expressionString+='\u22C5'
@@ -102,6 +101,45 @@ class ButtonHandler(var expression: Expression, val textOutput: TextOutput) {
         }
     }
 
+    fun closeParenthesisChecker() {
+        var parenthesisSum = 0
+
+        for (i in 0 until expressionString.length) {
+            if (expressionString[i] == '(') {
+                parenthesisSum++
+            } else if (expressionString[i] == ')') {
+                parenthesisSum--
+            }
+        }
+
+        if (parenthesisSum == 0)
+            expressionString = "($expressionString)"
+        else
+            expressionString += ')'
+    }
+
+    fun closeParenthesisDelHandler(string: String): String {
+        var result = string
+        var parenthesisSum = 1
+
+        for (i in result.length - 1 downTo 0) {
+            if (result[i] == ')')
+                parenthesisSum++
+            else if (result[i] == '(')
+                parenthesisSum--
+
+            if (parenthesisSum == 0) {
+                if (i == 0) {
+                    result = result.filterIndexed {index, _ -> index > 0}
+                } else {
+                    return result
+                }
+            }
+        }
+
+        return result
+    }
+
     fun setFunctionalButtonListeners(functionalButtons: List<Button>) {
         for (button in functionalButtons) {
             button.setOnClickListener {view: View ->
@@ -113,6 +151,12 @@ class ButtonHandler(var expression: Expression, val textOutput: TextOutput) {
                         var tempString = ""
                         for (i in 0 until expressionString.length - 1) {
                             tempString+=expressionString[i]
+                        }
+
+                        when (expressionString.last()) {
+                            ')' -> {
+                                tempString = closeParenthesisDelHandler(tempString)
+                            }
                         }
 
                         expressionString = tempString

@@ -8,8 +8,6 @@ class StringChecker {
     }
 
     fun checkString(expressionString: String): String {
-        //TODO: Check for errors relating to parentheses
-
         var result = ""
 
         expressionString.forEach {char ->
@@ -26,7 +24,10 @@ class StringChecker {
             }
         }
 
+        result = result.replace("0E-${Operator.SCALE}", "0")
+
         if (expressionString.isNotEmpty()) {
+            result = checkParentheses(result)
             result = removeConsecutiveTypes(validOperators.filter {char -> char != '(' && char != ')'}, result)
             result = removeConsecutiveTypes(listOf('.'), result)
         } else {
@@ -40,22 +41,46 @@ class StringChecker {
         return result
     }
 
-    fun regulateZero(string: String): String {
+    fun checkParentheses(string: String): String {
         var result = string
 
-        //TODO: Remove excess zeros
+        var loopCtr = 0
+        while (loopCtr < result.length) {
 
-        result = removePrecedingZeros(result)
+            if (result[loopCtr] == '(') {
+                try {
+                    if (result[loopCtr + 1] in validOperators.filter {it != '(' && it != ')'}) {
+                        val tempChar = result[loopCtr + 1]
+                        result = result.filterIndexed {index, _ -> index < loopCtr}
+                        result += tempChar
+                        continue
+                    }
+                } catch (ex: StringIndexOutOfBoundsException) {}
+            } else if (result[loopCtr] == ')') {
+                if (result[loopCtr - 1] in validOperators.filter {it != '(' && it != ')'}) {
+                    result = result.filterIndexed {index, _ -> index < loopCtr - 1}
+                    result += ')'
+                    continue
+                }
+            }
+
+            loopCtr++
+        }
 
         return result
     }
 
-    fun removePrecedingZeros(string: String): String {
+
+    fun regulateZero(string: String): String {
         var startingIndex = 0
 
+        //Removes preceding zeros
         for (i in 0 until string.length) {
             if (string[i] == '0') {
                 startingIndex = i + 1
+            } else if (string[i] in validOperators.filter {it != '(' && it != ')'}) {
+                startingIndex = 0
+                break
             } else {
                 break
             }

@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         buttonHandler.setNumButtonListeners(numButtons)
         buttonHandler.setOperatorButtonListeners(operatorButtons)
         buttonHandler.setFunctionalButtonListeners(functionalButtons)
+        buttonHandler.updateExpression()
 
         val textOutput = TextOutput(findViewById(R.id.expression_view))
     }
