@@ -33,6 +33,8 @@ class MainActivity : AppCompatActivity() {
         numButtons.add(findViewById(R.id.btn_8))
         numButtons.add(findViewById(R.id.btn_9))
 
+        operatorButtons.add(findViewById(R.id.btn_open_parenthesis))
+        operatorButtons.add(findViewById(R.id.btn_close_parenthesis))
         operatorButtons.add(findViewById(R.id.btn_multiply))
         operatorButtons.add(findViewById(R.id.btn_divide))
         operatorButtons.add(findViewById(R.id.btn_add))

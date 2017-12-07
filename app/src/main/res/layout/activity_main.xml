@@ -30,7 +30,7 @@
             android:fontFamily="sans-serif"
             android:gravity="center_vertical|end"
             android:paddingRight="10dp"
-            android:text="7+3*8"
+            android:text="0"
             android:textAlignment="textEnd"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textSize="54dp"
@@ -47,6 +47,26 @@
             android:orientation="vertical"
             android:paddingLeft="5dp"
             android:paddingRight="5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_open_parenthesis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/b_open_parenthesis" />
+
+                <Button
+                    android:id="@+id/btn_close_parenthesis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/b_close_parenthesis" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -74,6 +74,12 @@ class ButtonHandler(var expression: Expression, val textOutput: TextOutput) {
         for (button in operatorButtons) {
             button.setOnClickListener {view: View ->
                 when(view.id) {
+                    R.id.btn_open_parenthesis -> {
+                        expressionString+='('
+                    }
+                    R.id.btn_close_parenthesis -> {
+                        expressionString+=')'
+                    }
                     R.id.btn_multiply -> {
                         expressionString+='\u22C5'
                     }

@@ -11,6 +11,8 @@
     <string name="b_7">7</string>
     <string name="b_8">8</string>
     <string name="b_9">9</string>
+    <string name="b_open_parenthesis">(</string>
+    <string name="b_close_parenthesis">)</string>
     <string name="b_multiply">*</string>
     <string name="b_divide">/</string>
     <string name="b_add">+</string>

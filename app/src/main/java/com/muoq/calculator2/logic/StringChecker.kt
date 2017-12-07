@@ -4,10 +4,12 @@ class StringChecker {
 
     companion object {
         val validOperators = listOf('\u005E', '\u221A', 'p', 'r', '(', ')', '\u22C5', '\u00F7', '*', '/', '+', '-')
-        val numbersChars = listOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
+        val numberChars = listOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
     }
 
     fun checkString(expressionString: String): String {
+        //TODO: Check for errors relating to parentheses
+
         var result = ""
 
         expressionString.forEach {char ->
@@ -25,9 +27,41 @@ class StringChecker {
         }
 
         if (expressionString.isNotEmpty()) {
-            result = removeConsecutiveTypes(validOperators.toList(), result)
+            result = removeConsecutiveTypes(validOperators.filter {char -> char != '(' && char != ')'}, result)
             result = removeConsecutiveTypes(listOf('.'), result)
+        } else {
+            result = "0"
         }
+
+        result = regulateZero(result)
+        if (result.isEmpty())
+            result = "0"
+
+        return result
+    }
+
+    fun regulateZero(string: String): String {
+        var result = string
+
+        //TODO: Remove excess zeros
+
+        result = removePrecedingZeros(result)
+
+        return result
+    }
+
+    fun removePrecedingZeros(string: String): String {
+        var startingIndex = 0
+
+        for (i in 0 until string.length) {
+            if (string[i] == '0') {
+                startingIndex = i + 1
+            } else {
+                break
+            }
+        }
+
+        val result = string.filterIndexed {index, _ -> index >= startingIndex}
 
         return result
     }
